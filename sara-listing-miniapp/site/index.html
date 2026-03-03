@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Sara Chen • Listing Desk</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{--bg:#070A12;--panel:rgba(255,255,255,.06);--stroke:rgba(255,255,255,.12);--text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.65);--gold:#F6D88A;--r:18px;--r2:26px}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto;background:radial-gradient(1100px 600px at 20% 0%, rgba(246,216,138,.14), transparent 55%),var(--bg);color:var(--text);padding:18px 14px 26px}
+    .wrap{max-width:980px;margin:0 auto}
+    .top{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px;border-radius:var(--r2);background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));border:1px solid var(--stroke)}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:46px;height:46px;border-radius:14px;background:radial-gradient(90% 90% at 30% 25%, rgba(246,216,138,.95), rgba(207,168,94,.35) 45%, rgba(255,255,255,.08) 90%);border:1px solid rgba(255,255,255,.16)}
+    h1{margin:0;font-size:16px} p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.35}
+    .grid{margin-top:14px;display:grid;gap:12px;grid-template-columns:1.1fr .9fr}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid var(--stroke);border-radius:var(--r2);background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));overflow:hidden}
+    .hd{padding:14px 14px 10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .tabs{display:flex;gap:8px;padding:0 14px 14px;flex-wrap:wrap}
+    .tab{padding:9px 10px;border-radius:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);font-size:12px;cursor:pointer}
+    .tab.active{background:linear-gradient(180deg, rgba(246,216,138,.22), rgba(255,255,255,.06));border-color:rgba(246,216,138,.35)}
+    .body{padding:0 14px 14px}
+    .panel{border:1px solid var(--stroke);border-radius:var(--r);background:rgba(0,0,0,.25);padding:12px}
+    .panel h3{margin:0 0 8px;font-size:13px}
+    .panel p,.ul{margin:0 0 10px;color:rgba(255,255,255,.78);font-size:12px;line-height:1.55}
+    .ul{padding-left:18px}
+    .btn{border:1px solid var(--stroke);background:rgba(255,255,255,.06);color:rgba(255,255,255,.92);border-radius:14px;padding:10px 12px;font-size:12px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+    .btn.primary{background:linear-gradient(180deg, rgba(246,216,138,.26), rgba(207,168,94,.12));border-color:rgba(246,216,138,.33)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    label{font-size:11px;color:rgba(255,255,255,.72);display:block;margin-bottom:6px}
+    input,select,textarea{width:100%;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:rgba(255,255,255,.92);padding:10px 10px;outline:none;font-size:13px}
+    textarea{min-height:96px;resize:vertical}
+    .form{display:grid;gap:10px;grid-template-columns:1fr 1fr;padding:14px}
+    @media (max-width:900px){.form{grid-template-columns:1fr}}
+    .full{grid-column:1 / -1}
+    .tiny{font-size:10px;color:rgba(255,255,255,.55)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Sara Chen • Listing Desk</h1>
+          <p>CoinMarketCap + CoinGecko listing readiness, submission packaging, and post-listing visibility strategy.</p>
+        </div>
+      </div>
+      <div class="tiny">Open inside Telegram for one-tap submission.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div style="font-weight:700;font-size:14px" id="contentTitle">Listing Strategy Proposal</div>
+            <div style="color:rgba(255,255,255,.65);font-size:12px" id="contentSub">Verified market presence → credibility → liquidity → valuation</div>
+          </div>
+        </div>
+
+        <div class="tabs" id="tabs">
+          <div class="tab active" data-tab="proposal">Proposal</div>
+          <div class="tab" data-tab="pricing">Pricing</div>
+          <div class="tab" data-tab="checklist">Checklist</div>
+          <div class="tab" data-tab="script">Authority Script</div>
+        </div>
+
+        <div class="body">
+          <div class="panel" id="panel"></div>
+          <div class="row">
+            <a class="btn primary" id="downloadBtn" href="#" target="_blank" rel="noopener">⬇️ Download PDF</a>
+            <button class="btn" id="sendToBotBtn" type="button">📩 Send to Sara (Telegram)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div style="font-weight:700;font-size:14px">Request a Listing Readiness Review</div>
+            <div style="color:rgba(255,255,255,.65);font-size:12px">Submit details. If not in Telegram, it copies a message for you.</div>
+          </div>
+        </div>
+
+        <div class="form">
+          <div>
+            <label>Project Name</label>
+            <input id="projectName" placeholder="e.g., Burnaverse Protocol" />
+          </div>
+          <div>
+            <label>Token Symbol</label>
+            <input id="symbol" placeholder="e.g., BUV" />
+          </div>
+          <div>
+            <label>Network</label>
+            <select id="network">
+              <option value="BNB Chain">BNB Chain</option>
+              <option value="Ethereum">Ethereum</option>
+              <option value="Solana">Solana</option>
+              <option value="Base">Base</option>
+              <option value="Arbitrum">Arbitrum</option>
+              <option value="Polygon">Polygon</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label>Urgency</label>
+            <select id="urgency">
+              <option value="Urgent (24–72h)">Urgent (24–72h)</option>
+              <option value="This week">This week</option>
+              <option value="This month">This month</option>
+              <option value="Planning">Planning</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Contract Address</label>
+            <input id="contract" placeholder="0x... or program address" />
+          </div>
+          <div class="full">
+            <label>Links (Website / X / Explorer / DEX Pair / CEX)</label>
+            <textarea id="links" placeholder="Paste all relevant links here…"></textarea>
+          </div>
+          <div class="full">
+            <label>Goal</label>
+            <textarea id="goal" placeholder="Market valuation visibility, liquidity inflow, exchange outreach…"></textarea>
+          </div>
+
+          <div class="full row" style="padding:0 14px 14px;">
+            <button class="btn primary" id="sendLeadBtn" type="button">✅ Send Request</button>
+            <button class="btn" id="copyBtn" type="button">📋 Copy Summary</button>
+          </div>
+
+          <div class="full tiny" style="padding:0 14px 14px;">
+            This uses Telegram WebApp API when opened inside Telegram.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+
+  // PDFs are bundled in this same Pages site root
+  const PDF_PROPOSAL_URL  = location.origin + "/Listing_Proposal_Sara_Chen.pdf";
+  const PDF_PRICING_URL   = location.origin + "/Pricing_Framework_Sara_Chen.pdf";
+  const PDF_CHECKLIST_URL = location.origin + "/Token_Readiness_Checklist_Sara_Chen.pdf";
+  const PDF_SCRIPT_URL    = location.origin + "/Authority_Positioning_Script_Sara_Chen.pdf";
+
+  const content = {
+    proposal: {
+      title: "Listing Strategy Proposal",
+      sub: "Verified market presence → credibility → liquidity → valuation",
+      pdf: PDF_PROPOSAL_URL,
+      html: `
+        <h3>Executive Summary</h3>
+        <p>Without verified listing on major aggregators, projects face reduced investor trust, slower liquidity growth, and constrained market cap recognition.</p>
+        <h3>Framework</h3>
+        <ul class="ul">
+          <li><b>Phase 1</b>: Readiness audit (contract, liquidity, supply)</li>
+          <li><b>Phase 2</b>: Data structuring (pairs, sources, explorers)</li>
+          <li><b>Phase 3</b>: Submission packaging + positioning</li>
+          <li><b>Phase 4</b>: Post-listing visibility optimization</li>
+        </ul>
+      `
+    },
+    pricing: {
+      title: "Pricing Structure Framework",
+      sub: "Tiered advisory packages",
+      pdf: PDF_PRICING_URL,
+      html: `
+        <h3>Tier 1 — Listing Preparation</h3><p>Readiness audit + documentation structuring.</p>
+        <h3>Tier 2 — End-to-End Listing Support</h3><p>Preparation + submission packaging + positioning.</p>
+        <h3>Tier 3 — Valuation Acceleration</h3><p>Tier 2 + post-listing visibility strategy.</p>
+        <p><b>Note:</b> No guaranteed approvals; focus is readiness and probability improvement.</p>
+      `
+    },
+    checklist: {
+      title: "Token Readiness Checklist",
+      sub: "Fast filter for immediate listing",
+      pdf: PDF_CHECKLIST_URL,
+      html: `
+        <h3>Minimum Readiness</h3>
+        <ul class="ul">
+          <li>Contract verified on explorer</li>
+          <li>Minimum liquidity depth</li>
+          <li>Active trading pair</li>
+          <li>Website + litepaper/whitepaper</li>
+          <li>Tokenomics + supply clarity</li>
+          <li>Active socials</li>
+        </ul>
+        <p><b>Rule:</b> 7+ confirmed → proceed; under 7 → preparation first.</p>
+      `
+    },
+    script: {
+      title: "Authority Positioning Script",
+      sub: "Professional, compliant response",
+      pdf: PDF_SCRIPT_URL,
+      html: `
+        <h3>When asked: “Are you official?”</h3>
+        <p>“I operate as an independent listing consultant supporting projects seeking structured visibility alignment with major crypto data aggregators. My role focuses on readiness assessment, submission optimization, and positioning strategy to improve approval probability and post-listing performance.”</p>
+      `
+    }
+  };
+
+  const tabs = document.getElementById("tabs");
+  const panel = document.getElementById("panel");
+  const contentTitle = document.getElementById("contentTitle");
+  const contentSub = document.getElementById("contentSub");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const sendToBotBtn = document.getElementById("sendToBotBtn");
+
+  function inTelegram(){ return !!tg && typeof tg.sendData === "function"; }
+
+  function setActiveTab(key){
+    [...tabs.querySelectorAll(".tab")].forEach(t => t.classList.toggle("active", t.dataset.tab === key));
+    const c = content[key];
+    contentTitle.textContent = c.title;
+    contentSub.textContent = c.sub;
+    panel.innerHTML = c.html;
+    downloadBtn.href = c.pdf;
+
+    if(inTelegram()){
+      tg.expand();
+      tg.setHeaderColor("#070A12");
+      tg.setBackgroundColor("#070A12");
+    }
+  }
+
+  tabs.addEventListener("click", (e)=>{
+    const tab = e.target.closest(".tab");
+    if(!tab) return;
+    setActiveTab(tab.dataset.tab);
+  });
+
+  function buildLead(){
+    const projectName = document.getElementById("projectName").value.trim();
+    const symbol = document.getElementById("symbol").value.trim();
+    const network = document.getElementById("network").value;
+    const urgency = document.getElementById("urgency").value;
+    const contract = document.getElementById("contract").value.trim();
+    const links = document.getElementById("links").value.trim();
+    const goal = document.getElementById("goal").value.trim();
+    const msg =
+`LISTING REVIEW REQUEST
+Project: ${projectName || "-"}
+Symbol: ${symbol || "-"}
+Network: ${network}
+Urgency: ${urgency}
+
+Contract: ${contract || "-"}
+
+Links:
+${links || "-"}
+
+Goal:
+${goal || "-"}`;
+
+    return {project_name:projectName, symbol, network, urgency, contract, links, goal, msg};
+  }
+
+  document.getElementById("copyBtn").addEventListener("click", async ()=>{
+    const lead = buildLead();
+    await navigator.clipboard?.writeText(lead.msg);
+    alert("Copied summary.");
+  });
+
+  document.getElementById("sendLeadBtn").addEventListener("click", async ()=>{
+    const lead = buildLead();
+    const payload = { type:"lead", source:"telegram_mini_app", lead:{
+      project_name: lead.project_name, symbol: lead.symbol, network: lead.network,
+      urgency: lead.urgency, contract: lead.contract, links: lead.links, goal: lead.goal
+    }, message: lead.msg };
+
+    if(inTelegram()){
+      tg.sendData(JSON.stringify(payload));
+      tg.close();
+    } else {
+      await navigator.clipboard?.writeText(lead.msg);
+      alert("Not inside Telegram. Copied request — paste it to Sara on Telegram.");
+    }
+  });
+
+  sendToBotBtn.addEventListener("click", async ()=>{
+    const active = tabs.querySelector(".tab.active")?.dataset.tab || "proposal";
+    const c = content[active];
+    const payload = { type:"share_section", section:active, title:c.title, pdf:c.pdf, note:"Tapped from Mini App" };
+    if(inTelegram()){
+      tg.sendData(JSON.stringify(payload));
+      tg.close();
+    } else {
+      const text = `Hi Sara, I reviewed: ${c.title}\nPDF: ${c.pdf}\nI want to proceed with a listing readiness review.`;
+      await navigator.clipboard?.writeText(text);
+      alert("Copied message (open inside Telegram to send directly).");
+    }
+  });
+
+  setActiveTab("proposal");
+</script>
+</body>
+</html>

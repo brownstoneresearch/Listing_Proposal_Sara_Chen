@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sara Chen • Leads Dashboard</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto;background:#070A12;color:#fff}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .top{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    input{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;min-width:260px}
+    button,a.btn{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{border-bottom:1px solid rgba(255,255,255,.1);padding:10px;text-align:left;font-size:12px;vertical-align:top}
+    th{color:rgba(255,255,255,.75);font-weight:600}
+    .muted{color:rgba(255,255,255,.65);font-size:12px}
+    .pill{display:inline-block;padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);font-size:11px;margin-right:6px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .small{font-size:11px;color:rgba(255,255,255,.62)}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div style="font-size:16px;font-weight:700">Sara Chen • Leads Dashboard</div>
+        <div class="muted">Search, export CSV, and view submitted Mini App requests.</div>
+      </div>
+      <div class="row">
+        <input id="q" placeholder="Search: project / symbol / contract / username" />
+        <button id="refresh">Refresh</button>
+        <a class="btn" id="export" href="#">Export CSV</a>
+      </div>
+    </div>
+
+    <div class="small" style="margin-top:10px">
+      Open this page as: <span class="mono">/admin.html?token=YOUR_ADMIN_TOKEN</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Project</th>
+          <th>Symbol / Network</th>
+          <th>From</th>
+          <th>Contract</th>
+          <th>Links / Goal</th>
+        </tr>
+      </thead>
+      <tbody id="tb"></tbody>
+    </table>
+
+    <div id="status" class="muted" style="margin-top:10px"></div>
+  </div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const token = params.get("token") || "";
+
+  // CHANGE THIS after deploying the Worker:
+  const apiBase = "https://YOUR-WORKER-DOMAIN.workers.dev";
+
+  const tb = document.getElementById("tb");
+  const status = document.getElementById("status");
+  const q = document.getElementById("q");
+  const exportBtn = document.getElementById("export");
+
+  function esc(s){return (s||"").toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+  async function load(){
+    status.textContent = "Loading…";
+    tb.innerHTML = "";
+
+    const query = q.value.trim();
+    const url = new URL(apiBase + "/admin/api/leads");
+    url.searchParams.set("token", token);
+    url.searchParams.set("limit", "250");
+    if(query) url.searchParams.set("q", query);
+
+    exportBtn.href = apiBase + "/admin/api/export.csv?token=" + encodeURIComponent(token);
+
+    const res = await fetch(url.toString());
+    const data = await res.json();
+
+    if(!data.ok){
+      status.textContent = "Error: " + (data.error || "unknown");
+      return;
+    }
+
+    const rows = data.rows || [];
+    status.textContent = `Loaded ${rows.length} lead(s).`;
+
+    for(const r of rows){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${esc(r.created_at || "")}</td>
+        <td><b>${esc(r.project_name||"-")}</b><div class="muted">Urgency: ${esc(r.urgency||"-")}</div></td>
+        <td>
+          <span class="pill">${esc(r.symbol||"-")}</span>
+          <span class="pill">${esc(r.network||"-")}</span>
+        </td>
+        <td>${esc(r.telegram_name||"-")} <div class="muted">${esc(r.telegram_username||"")}</div></td>
+        <td class="mono">${esc(r.contract||"-")}</td>
+        <td>
+          <div class="muted"><b>Links</b><br/>${esc((r.links||"-").slice(0,260))}${(r.links||"").length>260?"…":""}</div>
+          <div class="muted" style="margin-top:8px"><b>Goal</b><br/>${esc((r.goal||"-").slice(0,260))}${(r.goal||"").length>260?"…":""}</div>
+        </td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+
+  document.getElementById("refresh").addEventListener("click", load);
+  q.addEventListener("keydown", (e)=>{ if(e.key==="Enter") load(); });
+
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+name = "sara-listing-bot"
+main = "src/worker.js"
+compatibility_date = "2026-03-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sara_listing_db"
+database_id = "CHANGE_ME_AFTER_CREATION"
+
+[vars]
+APP_ORIGIN = "https://YOUR-PAGES-DOMAIN.pages.dev"
+ADMIN_TOKEN = "CHANGE_ME_ADMIN_TOKEN"
+
+# Secrets (set with: npx wrangler secret put <NAME>)
+# BOT_TOKEN
+# ADMIN_CHAT_ID
+# WEBHOOK_SECRET
